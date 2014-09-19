@@ -15,5 +15,17 @@
   "bugs": {
     "url": "https://github.com/calvinmetcalf/web-worker/issues"
   },
-  "homepage": "https://github.com/calvinmetcalf/web-worker"
+  "homepage": "https://github.com/calvinmetcalf/web-worker",
+  "dependencies": {
+    "hbsify": "^1.0.1",
+    "lie": "^2.7.7"
+  },
+  "devDependencies": {
+    "browserify": "^5.12.0"
+  },
+  "browserify": {
+    "transform": [
+      "hbsify"
+    ]
+  }
 }
