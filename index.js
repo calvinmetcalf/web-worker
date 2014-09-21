@@ -6,13 +6,19 @@ function worker (script) {
   if (typeof global.Worker === 'undefined') {
     return new IWorker(script);
   }
-  if (!Array.isArray(script)) {
-    script = [script];
+  if (Array.isArray(script)) {
+    script = script.join('\n');
   }
   // is this still neccisary?
   var URL = global.URL || global.webkitURL;
   try {
-    return new Worker(URL.createObjectURL(new Blob(script, {type: 'text/javascript'})));
+    var brokenOut = moveImports(script);
+    return new Worker(URL.createObjectURL(new Blob([
+      'importScripts(\'',
+        brokenOut.imports.join('\',\''),
+        '\');\n',
+        brokenOut.rest
+      ], {type: 'text/javascript'})));
   } catch(e) {
     return new IWorker(script);
   }
@@ -88,7 +94,7 @@ function appendScript(win, scripts, main, fullfill, codeword){
 
 function makeIframe(script, codeword){
   return new Promise(function (fullfill, reject) {
-    if (document.readyState === 'complete'){
+    if (document.readyState === 'complete'){matches
       createIframe(script, codeword, fullfill);
     } else{ 
       global.addEventListener('load', function () {
