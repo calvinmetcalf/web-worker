@@ -3,7 +3,7 @@ module.exports = worker;
 var template = require('./iframe.hbs');
 var Promise = require('lie');
 function worker (script) {
-  if (typeof global.Worker === 'undefined') {
+  if (typeof global.Worker === 'undefined' || global.___FORCE_IFRAME) {
     return new IWorker(script);
   }
   if (Array.isArray(script)) {
@@ -103,27 +103,38 @@ function makeIframe(script, codeword){
     }
   });
 }
+var trimWhitespace = /\s*[\'\"](\S*)[\'\"]\s*/;
+var match = /(importScripts\(.*?\)[;|,]?)/;
+var replace1 = /(importScripts\(\s*(?:[\'\"].*?[\'\"])?\s*\)[;|,]?)/;
+var replace2 = /importScripts\(\s*([\'\"].*?[\'\"])?\s*\)[;|,]?/g;
 function moveImports(string){
   var rest = string;
   var match = true;
   var matches = {};
   function loopFunc(a, b){
     if(b){
+      // split it
       b.split(',').forEach(function(cc){
-        matches[makeUrl(cc.match(/\s*[\'\"](\S*)[\'\"]\s*/)[1])] = true; // trim whitespace, add to matches
+        // for each of the scripts
+        // trim the white space
+        // make it an absolute url
+        // add it to the matches
+        matches[makeUrl(cc.match(trimWhitespace)[1])] = true; // trim whitespace, add to matches
       });
     }
   }
   while(match){
-    match = rest.match(/(importScripts\(.*?\)[;|,]?)/);
-    rest = rest.replace(/(importScripts\(\s*(?:[\'\"].*?[\'\"])?\s*\)[;|,]?)/,'\n');
+    // find an instance of importScripts();
+    match = rest.match(match);
+    // replace it with a new line
+    rest = rest.replace(replace1,'\n');
     if(match){
-      match[0].replace(/importScripts\(\s*([\'\"].*?[\'\"])?\s*\)[;|,]?/g, loopFunc);
+      // then on that importScript do loopFunc on its contents
+      match[0].replace(replace2, loopFunc);
     }
   }
-  matches = Object.keys(matches);
   return {
-    imports: matches, 
+    imports: Object.keys(matches), 
     script: rest
   };
 }
