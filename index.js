@@ -13,12 +13,14 @@ function worker (script) {
   var URL = global.URL || global.webkitURL;
   try {
     var brokenOut = moveImports(script);
-    return new Worker(URL.createObjectURL(new Blob([
-      'importScripts(\'',
-        brokenOut.imports.join('\',\''),
-        '\');\n',
-        brokenOut.rest
-      ], {type: 'text/javascript'})));
+    var outArray = [];
+    if (brokenOut.imports.length) {
+      outArray.push('importScripts(\'');
+      outArray.push( brokenOut.imports.join('\',\''));
+      outArray.push('\');\n');
+    }
+    outArray.push(brokenOut.script);
+    return new Worker(URL.createObjectURL(new Blob(outArray, {type: 'text/javascript'})));
   } catch(e) {
     return new IWorker(script);
   }
@@ -94,7 +96,7 @@ function appendScript(win, scripts, main, fullfill, codeword){
 
 function makeIframe(script, codeword){
   return new Promise(function (fullfill, reject) {
-    if (document.readyState === 'complete'){matches
+    if (document.readyState === 'complete'){
       createIframe(script, codeword, fullfill);
     } else{ 
       global.addEventListener('load', function () {
@@ -104,8 +106,8 @@ function makeIframe(script, codeword){
   });
 }
 var trimWhitespace = /\s*[\'\"](\S*)[\'\"]\s*/;
-var match = /(importScripts\(.*?\)[;|,]?)/;
-var replace1 = /(importScripts\(\s*(?:[\'\"].*?[\'\"])?\s*\)[;|,]?)/;
+var match1 = /(importScripts\(.*?\)[;|,]?)/;
+var replace1 = /(importScripts\(\s*(?:\/\*)?\s*(?:[\'\"].*?[\'\"])?\s*(?:\*\/)?\s*\)[;|,]?)/;
 var replace2 = /importScripts\(\s*([\'\"].*?[\'\"])?\s*\)[;|,]?/g;
 function moveImports(string){
   var rest = string;
@@ -125,7 +127,7 @@ function moveImports(string){
   }
   while(match){
     // find an instance of importScripts();
-    match = rest.match(match);
+    match = rest.match(match1);
     // replace it with a new line
     rest = rest.replace(replace1,'\n');
     if(match){

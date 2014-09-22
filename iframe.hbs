@@ -1,0 +1,23 @@
+var self = {
+  onmessage: function(){},
+  postMessage: function (rawData) {
+    var data = '{{codeWord}}' + JSON.stringify(rawData);
+    window.parent.postMessage(data, '*');
+  }
+};
+window.onmessage = function(e) {
+  if (typeof e.data === 'string') {
+    e = {
+      data: JSON.parse(e.data)
+    };
+  }
+  self.postMessage(e);
+};
+window.onerror = function (errorMsg) {
+  var data = '{{codeWord}}error' + JSON.stringify({
+    msg: errorMsg
+  });
+  window.parent.postMessage(data, '*');
+  return true;
+};
+{{script}}

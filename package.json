@@ -4,7 +4,7 @@
   "description": "make web workers from strings",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "prova -l firefox -bq"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,8 @@
     "lie": "^2.7.7"
   },
   "devDependencies": {
-    "browserify": "^5.12.0"
+    "browserify": "^5.12.0",
+    "prova": "^1.14.2"
   },
   "browserify": {
     "transform": [
