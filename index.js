@@ -3,12 +3,13 @@ module.exports = worker;
 var template = require('./iframe.hbs');
 var Promise = require('lie');
 function worker (script) {
+   if (Array.isArray(script)) {
+    script = script.join('\n');
+  }
   if (typeof global.Worker === 'undefined' || global.___FORCE_IFRAME) {
     return new IWorker(script);
   }
-  if (Array.isArray(script)) {
-    script = script.join('\n');
-  }
+
   // is this still neccisary?
   var URL = global.URL || global.webkitURL;
   try {
@@ -36,10 +37,10 @@ function createIframe(script, codeword, fullfill){
     script: movedImports.script,
     codeword: codeword
   });
-  appendScript(iFrame, movedImports, text, fullfill, codeword);
+  appendScript(iFrame, movedImports.imports, text, fullfill, codeword);
 }
 function IWorker(script) {
-  var codeword = 'web-worker-calvinmetcalf' + Math.random();
+  var codeword = 'web_worker_calvinmetcalf' + Math.random().toString().slice(2);
   this._promise = makeIframe(script, codeword);
   this.onnmessage = this.onnerror = void 0;
   var self = this;
@@ -59,7 +60,7 @@ function IWorker(script) {
 
 IWorker.prototype.postMessage = function(data){
   this._promise.then(function(iFrame){
-    iFrame.contentWindow.postMessage(JSON.stringify(data),'*');
+    iFrame.contentWindow.__onmessage(JSON.stringify(data),'*');
   });
 };
 IWorker.prototype.addEventListener = function (ev, func) {
@@ -78,9 +79,11 @@ IWorker.prototype.terminate=function(){
 function appendScript(win, scripts, main, fullfill, codeword){
   var doc = win.contentWindow.document;
   doc.open();
-  doc.write('<script src="' + scripts.join('"></script><script src="') + '"></script>');
-  global[codeword] = function () {
-    global[codeword] = null;
+  if (scripts.length) {
+    doc.write('<script src="' + scripts.join('"></script><script src="') + '"></script>');
+  }
+  doc[codeword] = function () {
+    doc[codeword] = null;
     var script = doc.createElement('script');
     if (script.text !== undefined) {
       script.text = main;
@@ -90,7 +93,7 @@ function appendScript(win, scripts, main, fullfill, codeword){
     doc.documentElement.appendChild(script);
     fullfill(win);
   };
-  doc.write('<script>window.top["'+ codeword +'"]()</script>');
+  doc.write('<script>window.document.'+ codeword + '()</script>');
   doc.close();
 }
 

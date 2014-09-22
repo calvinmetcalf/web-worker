@@ -1,23 +1,31 @@
 var self = {
   onmessage: function(){},
   postMessage: function (rawData) {
-    var data = '{{codeWord}}' + JSON.stringify(rawData);
+    var data = '{{codeword}}' + JSON.stringify(rawData);
     window.parent.postMessage(data, '*');
   }
 };
-window.onmessage = function(e) {
-  if (typeof e.data === 'string') {
+window.__onmessage = function(e) {
+  if (typeof e === 'string') {
     e = {
-      data: JSON.parse(e.data)
+      data: JSON.parse(e)
     };
   }
-  self.postMessage(e);
+  try {
+    self.onmessage(e);
+  } catch (e) {
+    window.onerror(e);
+  }
 };
 window.onerror = function (errorMsg) {
-  var data = '{{codeWord}}error' + JSON.stringify({
+  var data = '{{codeword}}error' + JSON.stringify({
     msg: errorMsg
   });
   window.parent.postMessage(data, '*');
   return true;
 };
-{{script}}
+try {
+  {{{script}}}
+} catch (e) {
+  window.onerror(err.messege);
+}
