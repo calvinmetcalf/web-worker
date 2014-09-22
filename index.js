@@ -48,6 +48,10 @@ function IWorker(script) {
     if (!e.data.slice) {
       return;
     }
+    if(e.data.slice(0, codeword.length + 5) === (codeword + 'close')){
+      self.terminate();
+      return;
+    }
     if(e.data.slice(0, codeword.length + 5) === (codeword + 'error') && typeof self.onerror === 'function'){
       self.onerror({data:JSON.parse(e.data.slice(codeword.length + 5))});
       return;

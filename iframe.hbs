@@ -3,8 +3,68 @@ var self = {
   postMessage: function (rawData) {
     var data = '{{codeword}}' + JSON.stringify(rawData);
     window.parent.postMessage(data, '*');
+  },
+  close: function () {
+    window.parent.postMessage('{{codeword}}close', '*');
+  },
+  setTimeout: function (func, timeout) {
+    return setTimout(function () {
+      func.call(self);
+    }, timeout)
+  },
+  setInterval: function (func, timeout) {
+    return setInterval(function () {
+      func.call(self);
+    }, timeout)
   }
 };
+var apis = [
+  'atob',
+  'btoa',
+  'XMLHttpRequest',
+  'URL',
+  'TextEncoder',
+  'TextDecoder',
+  'navigator',
+  'location',
+  'WebSocket',
+  'clearTimeout',
+  'clearInterval',
+  'indexedDB',
+  'IDBTransaction',
+  'IDBKeyRange',
+  'EventSource',
+  'crypto',
+  'Symbol',
+  'WeakMap',
+  'WeakSet',
+  'Promise',
+  'Proxy',
+  'MessageChannel',
+  'Set',
+  'Map',
+  'Blob',
+  'Float32Array',
+  'ArrayBuffer',
+  'Float64Array',
+  'Int8Array',
+  'Int16Array',
+  'Int32Array',
+  'Uint8Array',
+  'Uint16Array',
+  'Uint32Array',
+  'Uint8ClampedArray',
+  'console',
+  'performance',
+  'escape',
+  'unescape'
+];
+self.self = self;
+apis.forEach(function (api) {
+  if (api in window) {
+    self[api] = window[api];
+  }
+});
 window.__onmessage = function(e) {
   if (typeof e === 'string') {
     e = {
@@ -25,9 +85,9 @@ window.onerror = function (errorMsg) {
   return true;
 };
 try {
-  (function (window, document) {
+  (function (self, postMessage, close, setTimeout, setInterval, window, document) {
     {{{script}}}
-  }())
+  }).call(self, self, self.postMessage, self.close, self.setTimeout, self.setInterval);
 } catch (e) {
   window.onerror(err.messege);
 }

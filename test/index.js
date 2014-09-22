@@ -1,5 +1,5 @@
 'use strict';
-var WWorker = require('../');
+var wWorker = require('../');
 var test = require('prova');
 
 test('tests', runTests);
@@ -15,7 +15,7 @@ function runTests(t) {
     '  }',
     '};'
     ];
-    var worker = new WWorker(workerScript);
+    var worker = wWorker(workerScript);
     var nonce = 'asdfasd';
     worker.onerror = function (e) {
       t.notOk(e, 'should not error');
@@ -38,7 +38,7 @@ function runTests(t) {
     '  }',
     '};'
     ];
-    var worker = new WWorker(workerScript);
+    var worker = wWorker(workerScript);
     var nonce = 'asdfasd';
     worker.onerror = function (e) {
       t.notOk(e, 'should not error');
@@ -61,7 +61,7 @@ function runTests(t) {
     '  }',
     '};'
     ];
-    var worker = new WWorker(workerScript);
+    var worker = wWorker(workerScript);
     var nonce = 'asdfasd';
     worker.onerror = function (e) {
       t.ok(e, 'should error');
