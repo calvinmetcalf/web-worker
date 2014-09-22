@@ -25,7 +25,9 @@ window.onerror = function (errorMsg) {
   return true;
 };
 try {
-  {{{script}}}
+  (function (window, document) {
+    {{{script}}}
+  }())
 } catch (e) {
   window.onerror(err.messege);
 }
