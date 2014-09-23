@@ -2,7 +2,7 @@
   "name": "web-worker",
   "version": "0.0.0",
   "description": "make web workers from strings",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "prova -l firefox -bq"
   },

@@ -1,5 +1,5 @@
 'use strict';
-var wWorker = require('../');
+var wWorker = require('../lib');
 var test = require('prova');
 
 test('tests', runTests);
