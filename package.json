@@ -1,7 +1,7 @@
 {
   "name": "web-worker",
-  "version": "0.1.0",
-  "description": "make web workers from strings",
+  "version": "0.1.1",
+  "description": "make web workers from strings with iframe fallback",
   "main": "lib/index.js",
   "scripts": {
     "test": "prova -l firefox -bq"
@@ -11,7 +11,7 @@
     "url": "https://github.com/calvinmetcalf/web-worker.git"
   },
   "author": "Calvin Metcalf",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/calvinmetcalf/web-worker/issues"
   },
